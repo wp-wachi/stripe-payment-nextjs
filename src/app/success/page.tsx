@@ -4,21 +4,21 @@ import { JSX } from "react";
 
 interface SuccessProps {
   searchParams: {
-    session_id: string;
+    sessionId: string;
   };
 }
 
 export default async function Success({
   searchParams,
 }: SuccessProps): Promise<JSX.Element | void> {
-  const { session_id } = searchParams;
+  const { sessionId } = searchParams;
 
-  if (!session_id) {
+  if (!sessionId) {
     throw new Error("Please provide a valid session_id (`cs_test_...`)");
   }
 
   const { status, customer_details } = await stripe.checkout.sessions.retrieve(
-    session_id,
+    sessionId,
     {
       expand: ["line_items", "payment_intent"],
     }
