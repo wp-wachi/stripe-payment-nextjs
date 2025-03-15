@@ -1,30 +1,22 @@
 import { redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
 import { JSX } from "react";
+import { CheckCircle } from "lucide-react";
 
 interface SuccessProps {
-  searchParams: {
-    sessionId: string;
-  };
+  searchParams: Promise<{ session_id: string }>;
 }
 
 export default async function Success({
   searchParams,
 }: SuccessProps): Promise<JSX.Element | void> {
-  const { sessionId } = searchParams;
+  const { session_id } = await searchParams;
 
-  if (!sessionId) {
+  if (!session_id) {
     throw new Error("Please provide a valid session_id (`cs_test_...`)");
   }
 
-  const { status, customer_details } = await stripe.checkout.sessions.retrieve(
-    sessionId,
-    {
-      expand: ["line_items", "payment_intent"],
-    }
-  );
-
-  const customerEmail = customer_details?.email;
+  const { status } = await stripe.checkout.sessions.retrieve(session_id);
 
   if (status === "open") {
     return redirect("/");
@@ -32,13 +24,12 @@ export default async function Success({
 
   if (status === "complete") {
     return (
-      <section id="success">
-        <p>
-          We appreciate your business! A confirmation email will be sent to{" "}
-          {customerEmail}. If you have any questions, please email{" "}
-        </p>
-        <a href="mailto:orders@example.com">orders@example.com</a>.
-      </section>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <CheckCircle className="w-24 h-24 text-green-500" />
+        <h1 className="mt-4 text-2xl font-semibold text-gray-900">
+          Order is completed
+        </h1>
+      </div>
     );
   }
 }

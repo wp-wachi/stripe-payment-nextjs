@@ -22,6 +22,7 @@ export async function getStripeProducts() {
         name: product.name,
         description: product.description,
         image: product.images[0] || "/placeholder.png",
+        priceId: product.default_price,
         price:
           price && price.unit_amount !== null ? price.unit_amount / 100 : null,
         currency: price ? price.currency.toUpperCase() : "N/A",

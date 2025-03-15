@@ -7,21 +7,50 @@ import Link from "next/link";
 
 export default function CheckoutPage() {
   const { cart } = useCart();
-  const [customerName, setCustomerName] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+  const [customerName, setCustomerName] = useState("Wachirapong Prasertwong");
+  const [email, setEmail] = useState("oriounited@gmail.com");
+  const [address, setAddress] = useState("261/594");
 
   // Calculate total price
   const totalPrice = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + (item.price ?? 0) * item.quantity,
     0
   );
 
   // Handle checkout (for now, just log details)
-  const handleCheckout = (e: React.FormEvent) => {
+  const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Checkout Details:", { customerName, email, address, cart });
-    alert("Checkout Successful! (Simulated)");
+    const lineItems = cart.map((item) => ({
+      price: item.priceId,
+      quantity: item.quantity,
+    }));
+
+    try {
+      const response = await fetch("/api/checkout_sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ line_items: lineItems }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url; // Redirect to the Stripe checkout page
+      } else {
+        console.error("Error:", data.error);
+        alert("Checkout failed: " + data.error);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error:", error);
+        alert("Checkout failed: " + error.message);
+      } else {
+        console.error("Unexpected error:", error);
+        alert("Checkout failed due to an unexpected error.");
+      }
+    }
   };
 
   return (

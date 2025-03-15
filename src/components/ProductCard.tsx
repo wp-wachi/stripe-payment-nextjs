@@ -7,13 +7,15 @@ interface ProductCardProps {
   id: string;
   imageUrl: string;
   title: string;
-  price?: number;
+  price: number | null;
+  priceId: string | null;
 }
 
 export default function ProductCard({
   id,
   imageUrl,
   title,
+  priceId,
   price,
 }: ProductCardProps) {
   const { addToCart } = useCart();
@@ -40,8 +42,9 @@ export default function ProductCard({
             addToCart({
               id,
               name: title,
-              imageUrl,
-              price: price ?? 0,
+              imageUrl: imageUrl,
+              price: price,
+              priceId: priceId,
               quantity: 1,
             })
           }
