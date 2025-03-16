@@ -35,12 +35,3 @@ export async function getStripeProducts() {
     return [];
   }
 }
-
-export async function retrieve(clientSecret: string) {
-  // const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
-  // const resp = await stripe.paymentIntents.retrieve(id: pk, {
-  //   client_secret: clientSecret,
-  // });
-  const resp = await stripe.paymentIntents.retrieve(clientSecret);
-  console.log(resp);
-}

@@ -58,7 +58,7 @@ export default function CheckoutPage() {
 
   const handleCheckoutDirectApi = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createPaymentIntent(1000); // ฿10.00
+    await createPaymentIntent(totalPrice * 100);
   };
 
   const createPaymentIntent = async (amount: number) => {
