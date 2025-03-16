@@ -63,16 +63,18 @@ export default function CheckoutPage() {
 
   const createPaymentIntent = async (amount: number) => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/create-payment-intent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ amount }),
-        }
-      );
+      const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+      if (!backendBaseUrl) {
+        throw new Error("Backend base URL is not set");
+      }
+
+      const response = await fetch(`${backendBaseUrl}/create-payment-intent`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount }),
+      });
 
       const data = await response.json();
 
