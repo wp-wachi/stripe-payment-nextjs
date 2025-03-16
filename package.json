@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^3.4.0",
     "@stripe/stripe-js": "^6.0.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "lucide-react": "^0.482.0",
     "next": "^15.2.2",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "stripe": "^17.7.0"

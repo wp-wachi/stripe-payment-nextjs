@@ -4,12 +4,15 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
   const { cart } = useCart();
   const [customerName, setCustomerName] = useState("Wachirapong Prasertwong");
   const [email, setEmail] = useState("oriounited@gmail.com");
   const [address, setAddress] = useState("261/594");
+  const [checkoutMethod, setCheckoutMethod] = useState("normal");
+  const router = useRouter();
 
   // Calculate total price
   const totalPrice = cart.reduce(
@@ -50,6 +53,53 @@ export default function CheckoutPage() {
         console.error("Unexpected error:", error);
         alert("Checkout failed due to an unexpected error.");
       }
+    }
+  };
+
+  const handleCheckoutDirectApi = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createPaymentIntent(1000); // ฿10.00
+  };
+
+  const createPaymentIntent = async (amount: number) => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/create-payment-intent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.data.client_secret) {
+        router.push(
+          `/promptpay_qrcode?client_secret=${data.data.client_secret}`
+        );
+      } else {
+        console.error("Error:", data.error);
+        alert("Checkout failed: " + data.error);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error:", error);
+        alert("Checkout failed: " + error.message);
+      } else {
+        console.error("Unexpected error:", error);
+        alert("Checkout failed due to an unexpected error.");
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (checkoutMethod === "normal") {
+      handleCheckout(e);
+    } else {
+      handleCheckoutDirectApi(e);
     }
   };
 
@@ -101,7 +151,7 @@ export default function CheckoutPage() {
           {/* Right: Checkout Form */}
           <div className="border rounded-md p-4 shadow-sm bg-white">
             <h2 className="text-lg font-semibold mb-3">📝 Customer Details</h2>
-            <form onSubmit={handleCheckout} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium">Full Name</label>
                 <input
@@ -132,6 +182,37 @@ export default function CheckoutPage() {
                   className="w-full px-3 py-2 border rounded-md"
                   required
                 ></textarea>
+              </div>
+
+              {/* Checkout Method */}
+              <div>
+                <label className="block text-sm font-medium">
+                  Checkout Method
+                </label>
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="checkoutMethod"
+                      value="normal"
+                      checked={checkoutMethod === "normal"}
+                      onChange={(e) => setCheckoutMethod(e.target.value)}
+                      className="mr-2"
+                    />
+                    Normal Checkout
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="checkoutMethod"
+                      value="directApi"
+                      checked={checkoutMethod === "directApi"}
+                      onChange={(e) => setCheckoutMethod(e.target.value)}
+                      className="mr-2"
+                    />
+                    Direct API Checkout
+                  </label>
+                </div>
               </div>
 
               {/* Checkout Button */}
