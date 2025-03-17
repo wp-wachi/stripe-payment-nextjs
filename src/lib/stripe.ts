@@ -35,3 +35,14 @@ export async function getStripeProducts() {
     return [];
   }
 }
+
+export async function getSession(sessionId: string) {
+  try {
+    const status = await stripe.checkout.sessions.retrieve(sessionId);
+    return status;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
