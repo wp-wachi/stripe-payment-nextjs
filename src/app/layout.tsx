@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/NavBar";
+import { Providers } from "./providers";
+// import { useSession, signIn, signOut } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,10 +17,10 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <CartProvider>
+        <Providers>
           <Navbar />
           <main className="p-6">{children}</main>
-        </CartProvider>
+        </Providers>
       </body>
     </html>
   );

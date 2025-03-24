@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { SignInButton } from "./SignInButton";
 
 export default function Navbar() {
   const { getCartSize } = useCart();
@@ -19,6 +20,7 @@ export default function Navbar() {
           </span>
         )}
       </Link>
+      <SignInButton />
     </nav>
   );
 }
